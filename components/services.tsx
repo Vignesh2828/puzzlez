@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Globe,
@@ -196,20 +195,24 @@ const services = [
   },
 ]
 
-/* ── animations ───────────────────────────────────────── */
+/* ── CSS-based fade-in-up observer hook ──────────────── */
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
-}
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
+function useInViewFade(ref: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("services-visible")
+          observer.unobserve(el)
+        }
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [ref])
 }
 
 /* ── service card sub-component ───────────────────────── */
@@ -223,37 +226,41 @@ function ServiceCard({
   isExpanded: boolean
   onToggle: () => void
 }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  useInViewFade(cardRef)
+
   return (
-    <motion.div variants={fadeUp}>
+    <div
+      ref={cardRef}
+      className="services-fade-up"
+    >
       <Card
-        className={`group relative h-full cursor-pointer overflow-hidden border-border/40 bg-card/50 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 ${service.borderHover} hover:shadow-2xl hover:shadow-primary/5 ${isExpanded ? "border-primary/30 ring-1 ring-primary/10 shadow-xl shadow-primary/5" : ""}`}
+        className={`group relative h-full cursor-pointer overflow-hidden border-border/40 bg-card/50 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 ${service.borderHover} hover:shadow-xl hover:shadow-primary/5 ${isExpanded ? "border-primary/30 ring-1 ring-primary/10 shadow-xl shadow-primary/5" : ""}`}
         onClick={onToggle}
       >
         {/* Gradient accent top bar */}
         <div
-          className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${service.gradient} transition-all duration-500 ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+          className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${service.gradient} transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
         />
 
-        {/* Hover / expanded glow */}
+        {/* Hover / expanded glow — lightweight opacity-only overlay */}
         <div
-          className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} transition-opacity duration-500 ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`}
+          className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`}
         />
 
         <CardContent className="relative flex flex-col gap-5 p-7">
           {/* Header row */}
           <div className="flex items-start justify-between gap-3">
             <div
-              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${service.bgGradient} ${service.iconColor} ring-1 ring-border/20 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg ${isExpanded ? "scale-110 shadow-lg" : ""}`}
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${service.bgGradient} ${service.iconColor} ring-1 ring-border/20 transition-transform duration-300 ease-out group-hover:scale-110 ${isExpanded ? "scale-110" : ""}`}
             >
               <service.icon className="h-6 w-6" strokeWidth={1.5} />
             </div>
-            <motion.div
-              animate={{ rotate: isExpanded ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary/80 text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary"
+            <div
+              className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary/80 text-muted-foreground transition-[transform,color,background-color] duration-300 group-hover:bg-primary/10 group-hover:text-primary ${isExpanded ? "rotate-180" : "rotate-0"}`}
             >
               <ChevronDown className="h-4 w-4" />
-            </motion.div>
+            </div>
           </div>
 
           {/* Title & description */}
@@ -271,7 +278,7 @@ function ServiceCard({
             {service.features.map((feat) => (
               <span
                 key={feat}
-                className="inline-flex items-center gap-1 rounded-full border border-border/50 bg-secondary/60 px-2.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm"
+                className="inline-flex items-center gap-1 rounded-full border border-border/50 bg-secondary/60 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
               >
                 <Check className="h-3 w-3 text-emerald-500" />
                 {feat}
@@ -279,98 +286,141 @@ function ServiceCard({
             ))}
           </div>
 
-          {/* Expanded content */}
-          <AnimatePresence initial={false}>
-            {isExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                className="overflow-hidden"
-              >
-                <div className="space-y-6 border-t border-border/30 pt-5">
-                  {/* Tech Stack */}
-                  <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
-                      Tech Stack We Use
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {service.techStack.map((tech) => (
-                        <span
-                          key={tech.name}
-                          className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm ${tech.color}`}
-                        >
-                          {tech.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Development Approach */}
-                  <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
-                      How We Build It
-                    </p>
-                    <ul className="space-y-2.5">
-                      {service.approach.map((step, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-3 text-sm text-muted-foreground"
-                        >
-                          <span
-                            className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r ${service.gradient}`}
-                          />
-                          {step}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* CTA hint */}
-                  <div className="flex items-center gap-2 text-xs font-medium text-primary">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                    Click anywhere to collapse
+          {/* Expanded content — CSS grid transition instead of Framer height animation */}
+          <div
+            className="services-expand-panel"
+            style={{
+              display: "grid",
+              gridTemplateRows: isExpanded ? "1fr" : "0fr",
+              opacity: isExpanded ? 1 : 0,
+              transition: "grid-template-rows 350ms cubic-bezier(0.4,0,0.2,1), opacity 250ms ease",
+            }}
+          >
+            <div className="overflow-hidden">
+              <div className="space-y-6 border-t border-border/30 pt-5">
+                {/* Tech Stack */}
+                <div>
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
+                    Tech Stack We Use
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {service.techStack.map((tech) => (
+                      <span
+                        key={tech.name}
+                        className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm ${tech.color}`}
+                      >
+                        {tech.name}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                {/* Development Approach */}
+                <div>
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
+                    How We Build It
+                  </p>
+                  <ul className="space-y-2.5">
+                    {service.approach.map((step, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-sm text-muted-foreground"
+                      >
+                        <span
+                          className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r ${service.gradient}`}
+                        />
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* CTA hint */}
+                <div className="flex items-center gap-2 text-xs font-medium text-primary">
+                  <ArrowRight className="h-3.5 w-3.5" />
+                  Click anywhere to collapse
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   )
 }
+
+/* ── inline styles for the CSS fade-in animation ─────── */
+
+const serviceStyles = `
+.services-fade-up {
+  opacity: 0;
+  transform: translateY(24px) translateZ(0);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+.services-visible .services-fade-up,
+.services-fade-up.services-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+/* Stagger children in the grid */
+.services-stagger > .services-fade-up:nth-child(1) { transition-delay: 0ms; }
+.services-stagger > .services-fade-up:nth-child(2) { transition-delay: 60ms; }
+.services-stagger > .services-fade-up:nth-child(3) { transition-delay: 120ms; }
+.services-stagger > .services-fade-up:nth-child(4) { transition-delay: 180ms; }
+.services-stagger > .services-fade-up:nth-child(5) { transition-delay: 240ms; }
+.services-stagger > .services-fade-up:nth-child(6) { transition-delay: 300ms; }
+.services-stagger > .services-fade-up:nth-child(7) { transition-delay: 360ms; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .services-fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+  .services-expand-panel {
+    transition: none !important;
+  }
+}
+`
 
 /* ── main component ───────────────────────────────────── */
 
 export function Services() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
 
-  const handleToggle = (idx: number) => {
+  useInViewFade(headerRef)
+  useInViewFade(gridRef)
+
+  const handleToggle = useCallback((idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? null : idx))
-  }
+  }, [])
 
   return (
     <section className="relative overflow-hidden px-6 py-16 md:py-24">
-      {/* Decorative background blobs */}
+      {/* Inject lightweight CSS — no external stylesheet needed */}
+      <style dangerouslySetInnerHTML={{ __html: serviceStyles }} />
+
+      {/* Decorative background blobs — reduced size & use opacity instead of blur */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 right-0 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-primary/5 via-transparent to-transparent blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-violet-500/5 via-transparent to-transparent blur-3xl" />
-        <div className="absolute top-1/3 left-1/2 h-[350px] w-[350px] -translate-x-1/2 rounded-full bg-gradient-to-br from-emerald-500/3 via-transparent to-transparent blur-3xl" />
+        <div className="absolute -top-40 right-0 h-[350px] w-[350px] rounded-full bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-70" />
+        <div className="absolute bottom-0 left-0 h-[300px] w-[300px] rounded-full bg-gradient-to-tr from-violet-500/5 via-transparent to-transparent opacity-70" />
       </div>
 
       <div className="relative mx-auto max-w-7xl">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-14 max-w-3xl"
+        {/* Section header — CSS-based animation */}
+        <div
+          ref={headerRef}
+          className="services-fade-up mb-14 max-w-3xl"
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             Our Expertise
           </span>
           <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
@@ -384,15 +434,12 @@ export function Services() {
             scale. Click on any service to explore the tech stacks we use and
             how we build it.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Service cards grid */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        {/* Service cards grid — CSS stagger instead of Framer stagger */}
+        <div
+          ref={gridRef}
+          className="services-stagger grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {services.map((service, idx) => (
             <ServiceCard
@@ -402,7 +449,7 @@ export function Services() {
               onToggle={() => handleToggle(idx)}
             />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )
