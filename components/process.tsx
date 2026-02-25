@@ -1,13 +1,22 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search, Map, Code, Rocket, Shield, type LucideIcon } from "lucide-react"
+import {
+  Search,
+  Map,
+  Code,
+  Rocket,
+  Shield,
+  type LucideIcon,
+} from "lucide-react"
 
 interface Step {
   icon: LucideIcon
   title: string
   description: string
   accent: string
+  accentBg: string
+  step: string
 }
 
 const steps: Step[] = [
@@ -17,6 +26,8 @@ const steps: Step[] = [
     description:
       "We dive deep into your vision, goals, and user needs to define the right problem to solve.",
     accent: "from-blue-500 to-cyan-500",
+    accentBg: "bg-blue-500/10",
+    step: "01",
   },
   {
     icon: Map,
@@ -24,6 +35,8 @@ const steps: Step[] = [
     description:
       "Architecture design, tech stack selection, sprint planning, and clear milestones.",
     accent: "from-violet-500 to-purple-500",
+    accentBg: "bg-violet-500/10",
+    step: "02",
   },
   {
     icon: Code,
@@ -31,6 +44,8 @@ const steps: Step[] = [
     description:
       "Agile sprints with continuous integration, code reviews, and regular demos.",
     accent: "from-amber-500 to-orange-500",
+    accentBg: "bg-amber-500/10",
+    step: "03",
   },
   {
     icon: Rocket,
@@ -38,6 +53,8 @@ const steps: Step[] = [
     description:
       "Rigorous testing, CI/CD pipelines, and production-ready deployments.",
     accent: "from-rose-500 to-pink-500",
+    accentBg: "bg-rose-500/10",
+    step: "04",
   },
   {
     icon: Shield,
@@ -45,6 +62,8 @@ const steps: Step[] = [
     description:
       "Ongoing monitoring, performance optimization, and feature iterations.",
     accent: "from-emerald-500 to-teal-500",
+    accentBg: "bg-emerald-500/10",
+    step: "05",
   },
 ]
 
@@ -52,17 +71,18 @@ const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.12,
     },
   },
 }
 
-const stepVariants = {
-  hidden: { opacity: 0, y: 30 },
+const cardVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
 }
 
@@ -71,15 +91,17 @@ const headerVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 }
 
+
 export function Process() {
   return (
     <section className="relative px-6 py-20 md:py-32 overflow-hidden">
-      {/* Background decoration */}
+      {/* Background decorations */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.03] blur-[120px]" />
+        <div className="absolute right-0 bottom-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-blue-500/[0.02] blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto max-w-5xl">
+      <div className="relative mx-auto max-w-7xl">
         {/* Section header */}
         <motion.div
           variants={headerVariants}
@@ -104,57 +126,91 @@ export function Process() {
           </p>
         </motion.div>
 
-        {/* Steps */}
+        {/* ── Desktop / Tablet: Horizontal flow ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="relative"
+          viewport={{ once: true, margin: "-60px" }}
+          className="hidden md:block"
         >
-          {/* Connecting line */}
-          <div className="absolute left-[27px] top-8 hidden h-[calc(100%-64px)] w-px md:block">
-            <div className="h-full w-full bg-gradient-to-b from-primary/30 via-primary/15 to-transparent" />
+          {/* Row 1: Steps 1-3 */}
+          <div className="flex items-stretch justify-center gap-4 lg:gap-6">
+            {steps.slice(0, 3).map((step) => (
+              <StepCard key={step.title} step={step} />
+            ))}
           </div>
 
-          <div className="flex flex-col gap-6">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                variants={stepVariants}
-                className="group relative"
-              >
-                <div className="flex gap-5 rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm transition-all duration-500 hover:border-primary/25 hover:bg-card/70 hover:shadow-lg hover:shadow-primary/[0.03] md:gap-7 md:p-7">
-                  {/* Step number & icon */}
-                  <div className="relative z-10 shrink-0">
-                    <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${step.accent} text-white shadow-lg transition-transform duration-300 group-hover:scale-110`}>
-                      <step.icon className="h-6 w-6" strokeWidth={1.8} />
-                    </div>
-                    {/* Step number badge */}
-                    <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-background bg-foreground text-[10px] font-bold text-background shadow-sm">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 pt-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-display text-lg font-semibold text-foreground md:text-xl">
-                        {step.title}
-                      </h3>
-                      {/* Decorative line */}
-                      <div className="hidden h-px flex-1 bg-gradient-to-r from-border to-transparent md:block" />
-                    </div>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+          {/* Row 2: Steps 4-5 */}
+          <div className="mt-4 lg:mt-6 flex items-stretch justify-center gap-4 lg:gap-6">
+            {steps.slice(3, 5).map((step) => (
+              <StepCard key={step.title} step={step} />
             ))}
           </div>
         </motion.div>
+
+        {/* ── Mobile: Sticky stacking cards ── */}
+        <div className="md:hidden">
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="sticky mx-auto w-full max-w-sm"
+              style={{
+                top: `${80 + index * 20}px`,
+                zIndex: index + 1,
+                paddingBottom: index < steps.length - 1 ? "16px" : "0px",
+              }}
+            >
+              <StepCard step={step} />
+            </motion.div>
+          ))}
+          {/* Extra scroll space so last card can fully land */}
+          <div className="h-16" />
+        </div>
       </div>
     </section>
+  )
+}
+
+/* ── Step Card Component ── */
+function StepCard({ step }: { step: Step }) {
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="group relative w-full md:w-56 lg:w-64 xl:w-72"
+    >
+      <div className="relative h-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-5 lg:p-6 transition-all duration-500 hover:border-primary/30 hover:bg-card/80 hover:shadow-xl hover:shadow-primary/[0.06] hover:-translate-y-1">
+        {/* Step number watermark */}
+        <span className="absolute top-3 right-4 text-[3.5rem] lg:text-[4rem] font-black leading-none text-foreground/[0.06] select-none transition-all duration-500 group-hover:text-primary/20 group-hover:scale-110">
+          {step.step}
+        </span>
+
+        {/* Icon */}
+        <div className="relative mb-4">
+          <div
+            className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${step.accent} text-white shadow-lg shadow-black/10 transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl`}
+          >
+            <step.icon className="h-5 w-5" strokeWidth={1.8} />
+          </div>
+        </div>
+
+        {/* Content */}
+        <h3 className="mb-2 font-display text-base font-semibold text-foreground lg:text-lg">
+          {step.title}
+        </h3>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {step.description}
+        </p>
+
+        {/* Bottom accent bar */}
+        <div
+          className={`absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full bg-gradient-to-r ${step.accent} transition-all duration-500 group-hover:w-3/4`}
+        />
+      </div>
+    </motion.div>
   )
 }

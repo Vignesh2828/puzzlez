@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, ArrowRight, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -14,25 +15,27 @@ const navLinks = [
   { label: "Tech Stack", href: "/tech-stack" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/#contact" },
-]
+];
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const [hoveredPath, setHoveredPath] = useState<string | null>(null)
-  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : ""
-    return () => { document.body.style.overflow = "" }
-  }, [mobileOpen])
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   return (
     <>
@@ -42,7 +45,7 @@ export function Navbar() {
         transition={{ duration: 0.1, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          scrolled ? "py-3" : "py-6"
+          scrolled ? "py-3" : "py-6",
         )}
       >
         <nav
@@ -51,7 +54,7 @@ export function Navbar() {
             scrolled
               ? "border-border/50 bg-background/80 py-2.5 shadow-lg shadow-black/5 backdrop-blur-2xl"
               : "border-transparent bg-transparent py-4",
-            "mx-4 md:mx-auto"
+            "mx-4 md:mx-auto",
           )}
         >
           {/* Logo */}
@@ -60,9 +63,14 @@ export function Navbar() {
             className="group relative flex items-center gap-2.5 outline-none"
             onMouseEnter={() => setHoveredPath(null)}
           >
-            <span className="font-display text-xl font-bold tracking-tight text-foreground">
-              Puzzlez<span className="text-primary ml-[2px]">.</span>
-            </span>
+            <Image
+              src="/logo/logo.png"
+              alt="Puzzlez Logo"
+              width={140}
+              height={40}
+              className="object-contain transition-transform duration-300 ease-out group-hover:scale-105"
+              priority
+            />
           </Link>
 
           {/* Desktop nav links */}
@@ -71,7 +79,7 @@ export function Navbar() {
             onMouseLeave={() => setHoveredPath(null)}
           >
             {navLinks.map((link) => {
-              const isActive = pathname === link.href
+              const isActive = pathname === link.href;
               return (
                 <li key={link.href} className="relative">
                   <Link
@@ -81,7 +89,7 @@ export function Navbar() {
                       "relative z-10 block px-4 py-2 text-sm font-medium transition-colors duration-300",
                       isActive
                         ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground hover:text-primary",
                     )}
                   >
                     {link.label}
@@ -98,9 +106,9 @@ export function Navbar() {
                         transition={{
                           type: "spring",
                           stiffness: 400,
-                          damping: 30
+                          damping: 30,
                         }}
-                        className="absolute inset-0 z-0 rounded-full bg-accent/50 backdrop-blur-md"
+                        className="absolute inset-0 z-0 rounded-full bg-primary/10"
                       />
                     )}
                   </AnimatePresence>
@@ -113,12 +121,12 @@ export function Navbar() {
                       transition={{
                         type: "spring",
                         stiffness: 380,
-                        damping: 30
+                        damping: 30,
                       }}
                     />
                   )}
                 </li>
-              )
+              );
             })}
           </ul>
 
@@ -129,8 +137,15 @@ export function Navbar() {
               className="group relative h-10 overflow-hidden rounded-full bg-primary px-6 font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:shadow-md active:scale-95 border-0"
               asChild
             >
-              <Link href="/#contact">
-                <span className="flex items-center gap-1.5">
+              <Link href="/#contact" className="relative flex items-center">
+
+                {/* Glare Layer */}
+                <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+                  <span className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12 bg-gradient-to-r from-white/0 via-white/40 to-white/0 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
+                </span>
+
+                {/* Content */}
+                <span className="relative flex items-center gap-1.5">
                   Get Started
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
@@ -146,7 +161,7 @@ export function Navbar() {
               "relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 md:hidden",
               mobileOpen
                 ? "bg-primary/10 text-primary"
-                : "text-foreground hover:bg-accent/50"
+                : "text-foreground hover:bg-accent/50",
             )}
             aria-label="Toggle menu"
           >
@@ -212,7 +227,7 @@ export function Navbar() {
             >
               <nav className="space-y-2">
                 {navLinks.map((link, idx) => {
-                  const isActive = pathname === link.href
+                  const isActive = pathname === link.href;
                   return (
                     <motion.div
                       key={link.href}
@@ -232,7 +247,7 @@ export function Navbar() {
                           "group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-300",
                           isActive
                             ? "bg-primary/10 text-primary"
-                            : "text-foreground hover:bg-accent/50"
+                            : "text-foreground hover:bg-primary/10",
                         )}
                       >
                         {/* Active dot */}
@@ -240,8 +255,8 @@ export function Navbar() {
                           className={cn(
                             "h-2 w-2 rounded-full transition-all duration-300",
                             isActive
-                              ? "bg-gradient-to-r from-primary to-violet-500 shadow-lg shadow-primary/50"
-                              : "bg-border group-hover:bg-primary/40"
+                              ? "bg-primary shadow-lg shadow-primary/50"
+                              : "bg-border group-hover:bg-primary/40",
                           )}
                         />
                         <span className="text-2xl font-semibold tracking-tight">
@@ -249,7 +264,7 @@ export function Navbar() {
                         </span>
                       </Link>
                     </motion.div>
-                  )
+                  );
                 })}
               </nav>
 
@@ -258,12 +273,15 @@ export function Navbar() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3, delay: navLinks.length * 0.06 + 0.1 }}
+                transition={{
+                  duration: 0.3,
+                  delay: navLinks.length * 0.06 + 0.1,
+                }}
                 className="mt-10 px-1"
               >
                 <Button
                   size="lg"
-                  className="group w-full overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-violet-500 py-6 text-base font-semibold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 border-0"
+                  className="group w-full overflow-hidden rounded-2xl bg-primary text-base font-semibold text-white shadow-xl shadow-primary/25 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 border-0"
                   asChild
                 >
                   <Link href="/#contact" onClick={() => setMobileOpen(false)}>
@@ -280,5 +298,5 @@ export function Navbar() {
         )}
       </AnimatePresence>
     </>
-  )
+  );
 }

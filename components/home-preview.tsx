@@ -49,6 +49,7 @@ import {
   User,
   FileText,
 } from "lucide-react"
+import { Process } from "./process"
 
 /* ── data ─────────────────────────────────────────────── */
 
@@ -144,52 +145,36 @@ const stats = [
 
 const testimonials = [
   {
-    name: "Sarah Chen",
-    role: "CTO, Meridian Health",
+    name: "Sarathi",
+    role: "Founder, DPS Tuition Center",
     quote:
-      "Their engineering quality is top-notch. They rewrote our entire backend in 4 weeks and the performance gains were incredible.",
-    initials: "SC",
+      "They built our tuition center website with clarity and precision. Student inquiries increased significantly within the first few weeks of launch.",
+    initials: "SA",
     accent: "from-blue-500 to-cyan-500",
   },
   {
-    name: "James Rodriguez",
-    role: "Founder, NovaPay",
+    name: "Sanjay",
+    role: "Founder, Zara Architects",
     quote:
-      "They shipped our MVP in 8 weeks and it felt like a polished product. Investors were impressed from day one.",
-    initials: "JR",
+      "The website reflects our architectural philosophy perfectly — clean, modern, and professional. Clients now understand our vision before even meeting us.",
+    initials: "SJ",
     accent: "from-violet-500 to-purple-500",
   },
   {
-    name: "Emily Watson",
-    role: "VP Product, CloudSync",
+    name: "Praveena",
+    role: "Founder, Veena Naturals",
     quote:
-      "Their long-term thinking is rare. They didn't just build features — they built a platform that scales beautifully.",
-    initials: "EW",
+      "Our ecommerce experience feels premium and trustworthy. The performance and UI quality helped us build strong customer confidence.",
+    initials: "PV",
     accent: "from-emerald-500 to-teal-500",
   },
   {
-    name: "David Park",
-    role: "CEO, Quantum Labs",
+    name: "Karthik",
+    role: "Founder, Diviks",
     quote:
-      "We went from idea to a fully functional SaaS in under 3 months. The quality and speed was unlike anything we'd experienced.",
-    initials: "DP",
+      "They transformed my invoice application idea into a scalable product billsmith. The dashboard design and backend architecture were exceptionally well thought out.",
+    initials: "KR",
     accent: "from-orange-500 to-amber-500",
-  },
-  {
-    name: "Priya Sharma",
-    role: "Head of Eng, Finova",
-    quote:
-      "Puzzlez's team integrated with ours seamlessly. Their code quality and communication are best-in-class.",
-    initials: "PS",
-    accent: "from-pink-500 to-rose-500",
-  },
-  {
-    name: "Michael Torres",
-    role: "Founder, GreenPath",
-    quote:
-      "From day one they treated our project like their own. The attention to detail in both UI and architecture was remarkable.",
-    initials: "MT",
-    accent: "from-teal-500 to-cyan-500",
   },
 ]
 
@@ -591,6 +576,9 @@ export function HomePreview() {
           </motion.div>
         </motion.section>
 
+        {/* Process */}
+        <Process />
+
         {/* ───── Testimonials Carousel ───── */}
         <motion.section {...sectionFade} className="mb-32 lg:mb-40">
           <SectionHeader
@@ -672,7 +660,7 @@ export function HomePreview() {
 
                 <div className="relative flex h-full flex-col justify-between gap-10">
                   <div className="space-y-6">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-emerald-500 text-white shadow-xl shadow-primary/20">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white ">
                       <Send className="h-8 w-8" strokeWidth={1.5} />
                     </div>
                     <div>

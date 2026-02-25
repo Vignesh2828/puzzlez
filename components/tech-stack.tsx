@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { Globe, Cable, Database, Cloud, Grid2X2 } from "lucide-react"
 import Image from "next/image"
 
 /* ── technology data with categories ─────────────────── */
@@ -8,12 +9,13 @@ import Image from "next/image"
 const techCategories = [
   {
     label: "Frontend",
-    icon: "◆",
+    icon: Globe,
     color: "#3b82f6",
     colorEnd: "#06b6d4",
     techs: [
       { name: "Next.js", logo: "/tech/nextjs.png" },
       { name: "React", logo: "/tech/react.png" },
+      { name: "Angular", logo: "/tech/angular.png" },
       { name: "React Native", logo: "/tech/react-native.png" },
       { name: "TypeScript", logo: "/tech/typescript.png" },
       { name: "Tailwind CSS", logo: "/tech/tailwindcss.png" },
@@ -21,22 +23,24 @@ const techCategories = [
   },
   {
     label: "Backend",
-    icon: "⬡",
+    icon: Cable,
     color: "#10b981",
     colorEnd: "#14b8a6",
     techs: [
       { name: "Node.js", logo: "/tech/nodejs.png" },
       { name: "Express", logo: "/tech/express.png" },
+      { name: ".Net", logo: "/tech/dot-net.png" },
       { name: "GraphQL", logo: "/tech/graphql.png" },
     ],
   },
   {
     label: "Database",
-    icon: "◈",
+    icon: Database,
     color: "#8b5cf6",
     colorEnd: "#a855f7",
     techs: [
       { name: "MongoDB", logo: "/tech/mongodb.png" },
+      { name: "MySQL", logo: "/tech/mysql.png" },
       { name: "PostgreSQL", logo: "/tech/postgresql.png" },
       { name: "Supabase", logo: "/tech/supabase.png" },
       { name: "Redis", logo: "/tech/redis.png" },
@@ -44,19 +48,21 @@ const techCategories = [
   },
   {
     label: "Cloud & DevOps",
-    icon: "◇",
+    icon: Cloud,
     color: "#f59e0b",
     colorEnd: "#f97316",
     techs: [
+      { name: "Azure", logo: "/tech/azure.png" },
       { name: "AWS", logo: "/tech/aws.png" },
       { name: "GCP", logo: "/tech/gcp.png" },
       { name: "Docker", logo: "/tech/docker.png" },
       { name: "Kubernetes", logo: "/tech/kubernetes.png" },
+      { name: "Azure Devops", logo: "/tech/azure-devops.png" },
     ],
   },
   {
     label: "Microsoft 365 & Power Platform",
-    icon: "⬢",
+    icon: Grid2X2,
     color: "#0078d4",
     colorEnd: "#5c2d91",
     techs: [
@@ -172,7 +178,7 @@ export function TechStack() {
                       boxShadow: `0 4px 14px ${category.color}30`,
                     }}
                   >
-                    {category.icon}
+                    <category.icon />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-foreground">

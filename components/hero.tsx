@@ -63,10 +63,22 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button size="lg" className="group rounded-full px-8 text-sm font-medium transition-all duration-300 hover:bg-primary/90 active:scale-95" asChild>
-            <Link href="/#contact">
-              Get Started
-              <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <Button
+            size="lg"
+            className="group relative overflow-hidden rounded-full px-8 text-sm font-medium transition-all duration-300 hover:bg-primary/90 active:scale-95"
+            asChild
+          >
+            <Link href="/#contact" className="relative flex items-center">
+
+              <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+                <span className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-all duration-700 ease-out group-hover:left-full group-hover:opacity-100" />
+              </span>
+
+              <span className="relative flex items-center">
+                Get Started
+                <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+
             </Link>
           </Button>
           <Button

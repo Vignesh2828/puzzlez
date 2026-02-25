@@ -1,5 +1,6 @@
-import Link from "next/link"
-import { Github, Twitter, Linkedin, Instagram } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { Github, Twitter, Linkedin, Instagram } from "lucide-react";
 
 const footerLinks = {
   Services: [
@@ -20,14 +21,14 @@ const footerLinks = {
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
   ],
-}
+};
 
 const socialLinks = [
   { icon: Twitter, href: "#", label: "Twitter" },
   { icon: Github, href: "#", label: "GitHub" },
   { icon: Linkedin, href: "#", label: "LinkedIn" },
   { icon: Instagram, href: "#", label: "Instagram" },
-]
+];
 
 export function Footer() {
   return (
@@ -35,8 +36,18 @@ export function Footer() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Link href="/" className="font-display text-xl font-bold text-foreground">
-              Puzzlez<span className="text-primary ml-[2px]">.</span>
+            <Link
+              href="/"
+              className="group relative flex items-center gap-2.5 outline-none"
+            >
+              <Image
+                src="/logo/logo.png"
+                alt="Puzzlez Logo"
+                width={140}
+                height={40}
+                className="object-contain transition-transform duration-300 ease-out group-hover:scale-105"
+                priority
+              />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               A tech startup digitalizing businesses with modern technology,
@@ -77,12 +88,25 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 border-t border-border pt-8 text-center">
+        <div className="mt-16 border-t border-border pt-8 text-center flex justify-between">
           <p className="text-xs text-muted-foreground">
             {`\u00A9 ${new Date().getFullYear()} Puzzlez. All rights reserved.`}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Crafted with{" "}
+            <span className="inline-block transition-transform duration-300 hover:scale-110">
+              ❤️
+            </span>{" "}
+            by{" "}
+            <Link
+              href="/"
+              className="font-medium transition-colors duration-300 hover:text-primary"
+            >
+              Puzzlez
+            </Link>
           </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
